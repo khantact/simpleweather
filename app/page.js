@@ -3,7 +3,7 @@ import Weather from "../components/weather/Weather";
 
 export default function Home() {
   return (
-    <div className="h-screen bg-slate-100">
+    <div className="h-screen bg-slate-200">
       <Weather />
     </div>
   );
