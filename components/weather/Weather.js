@@ -8,6 +8,10 @@ function Weather() {
   const [iconPath, setIconPath] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
 
+  // Fetch data from weatherapi from our backend api
+  // Reason why we're using a backend api instead of directly calling it here is because
+  // I want to use environment variables for our api key and those don't work when you have
+  // "use client" in nextjs for whatever reason
   async function fetchData(cityName) {
     try {
       const response = await fetch(
@@ -25,7 +29,7 @@ function Weather() {
       alert(error);
     }
   }
-
+  // Get us the appropriate weather icon based on the weather code returned to us from api
   function fetchIcon(searchCode) {
     for (const item of IconData) {
       console.log(item);
@@ -38,14 +42,15 @@ function Weather() {
     }
   }
 
+  // Use this to initially load Hamilton,NY for our city this runs once since our dependency array is empty
   useEffect(() => {
     fetchData("13346");
   }, []);
 
   function handleSearch(e) {
-    e.preventDefault();
+    e.preventDefault(); // Prevent page from refreshing
     fetchData(cityName);
-    setCityName("");
+    setCityName(""); // clear the form input
   }
 
   return (
@@ -78,7 +83,6 @@ function Weather() {
           </h2>
         </div>
         <div className="grid place-items-center pt-4">
-          {/* TODO: make the text fade in instead of blinking into existence  */}
           <Image
             src={iconPath ? iconPath : ""}
             alt="weatherIcon"
@@ -97,7 +101,7 @@ function Weather() {
               {weatherLocationData ? weatherLocationData.location.region : "--"}
             </h3>
           </div>
-          {/* High and Low temp */}
+          {/* Temp */}
           <div className="flex justify-center gap-2">
             <h4>
               {weatherLocationData
@@ -105,6 +109,14 @@ function Weather() {
                   "°F" +
                   " | " +
                   weatherLocationData.current.condition.text
+                : "--"}
+            </h4>
+          </div>
+          {/* Feels like */}
+          <div className="flex justify-center gap-2">
+            <h4>
+              {weatherLocationData
+                ? "Feels like " + weatherLocationData.current.feelslike_f + "°F"
                 : "--"}
             </h4>
           </div>
