@@ -14,8 +14,15 @@ function Weather() {
   // "use client" in nextjs for whatever reason
   async function fetchData(cityName) {
     try {
+      let apiUrl = "";
+      const environment = process.env.NODE_ENV;
+      if (environment === "development") {
+        apiUrl = "http://localhost:3000/api/weather?address=";
+      } else if (environment === "production") {
+        apiUrl = "https://simpleweather-one.vercel.app/api/weather?address=";
+      }
       const response = await fetch(
-        "http://localhost:3000/api/weather?address=" + cityName // using query parameters to get city name
+        apiUrl + cityName // using query parameters to get city name
       );
       const data = await response.json();
       if (data && !data.response.error) {
@@ -32,7 +39,6 @@ function Weather() {
   // Get us the appropriate weather icon based on the weather code returned to us from api
   function fetchIcon(searchCode) {
     for (const item of IconData) {
-      console.log(item);
       if (item.code === searchCode) {
         // dont need /public/... since our public folder is in our root
         let path = "/weatherIcons/day/" + item.icon + ".png";
