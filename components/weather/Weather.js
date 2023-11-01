@@ -1,9 +1,11 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { FaCloudShowersHeavy } from "react-icons/fa";
+import Image from "next/image";
+import IconData from "lib/weatherCode.json";
 function Weather() {
   const [weatherLocationData, setWeatherLocationData] = useState(null);
   const [cityName, setCityName] = useState("");
+  const [iconPath, setIconPath] = useState("");
 
   async function fetchData(cityName) {
     try {
@@ -13,10 +15,23 @@ function Weather() {
       const data = await response.json();
       if (data) {
         setWeatherLocationData(data.response);
+        fetchIcon(data.response.current.condition.code);
       }
-      console.log("data", data.response.location);
     } catch (error) {
-      console.log(error);
+      // alert(error);
+    }
+  }
+
+  function fetchIcon(searchCode) {
+    for (const item of IconData) {
+      console.log(item);
+      if (item.code === searchCode) {
+        // dont need /public/... since our public folder is in our root
+        let path = "/weatherIcons/day/" + item.icon + ".png";
+        console.log("icon", item.icon);
+        setIconPath(path);
+        return path;
+      }
     }
   }
 
@@ -27,46 +42,57 @@ function Weather() {
   function handleSearch(e) {
     e.preventDefault();
     fetchData(cityName);
+    setCityName("");
   }
 
   return (
     <div className="h-screen grid place-content-center">
-      <div className="bg-slate-400 px-64 pt-12 pb-64 rounded-md shadow-lg">
+      <div className="bg-navy px-[15vw] min-px-[100vw] pt-12 pb-[10vh] rounded-md shadow-lg">
         <form className="flex gap-2 translate-x-8" onSubmit={handleSearch}>
           <input
             type="text"
             value={cityName}
             onChange={(e) => setCityName(e.target.value)}
-            className="rounded-full shadow-lg h-12 bg-slate-300 p-6 outline-none autofill-none"
-            placeholder="Enter your Location:"
+            className="rounded-full shadow-lg h-12 bg-slate-300 p-6 outline-none text-black"
+            placeholder="Enter your Location"
           ></input>
           <button
             type="submit"
-            className="bg-slate-500 rounded-full p-2.5 hover:bg-slate-600"
+            className="bg-sky-500 rounded-full p-2.5 hover:bg-sky-600 shadow-lg text-gray ease-in duration-100"
           >
             Search
           </button>
         </form>
-        <div className="grid place-items-center pt-4 gap-4">
-          {/* TODO: Change out this temp image
-              TODO: make the text fade in instead of blinking into existence  */}
-          <FaCloudShowersHeavy className="text-[18vw] flex justify-center pt-4" />
+        <div className="grid place-items-center pt-4">
+          {/* TODO: make the text fade in instead of blinking into existence  */}
+          <Image
+            src={iconPath ? iconPath : ""}
+            alt="weather"
+            className="flex justify-center"
+            width={86}
+            height={86}
+          />
           {/* makes sure that we are showing loading if we do not have data yet */}
-          <h1 className="text-[4vw] flex justify-center">
-            {weatherLocationData
-              ? weatherLocationData.location.name
-              : "loading..."}
+          {/* City */}
+          <h1 className="text-[2vw] flex justify-center">
+            {weatherLocationData ? weatherLocationData.location.name : "--"}
           </h1>
+          {/* Country and Region Info */}
           <div className="flex justify-center gap-2">
             <h3 className="">
+              {weatherLocationData ? weatherLocationData.location.region : "--"}
+            </h3>
+          </div>
+          {/* High and Low temp */}
+          <div className="flex justify-center gap-2">
+            <h4>
               {weatherLocationData
-                ? weatherLocationData.location.country
-                : "loading..."}
-            </h3>
-            <h3>{weatherLocationData ? "|" : ""}</h3>
-            <h3 className="">
-              {weatherLocationData ? weatherLocationData.location.region : ""}
-            </h3>
+                ? weatherLocationData.current.temp_f +
+                  "°F" +
+                  " | " +
+                  weatherLocationData.current.condition.text
+                : "--"}
+            </h4>
           </div>
         </div>
       </div>
