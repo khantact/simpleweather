@@ -19,6 +19,7 @@ function Weather() {
       if (environment === "development") {
         apiUrl = "http://localhost:3000/api/weather?address=";
       } else if (environment === "production") {
+        console.log("in the loop");
         apiUrl = "https://simpleweather-one.vercel.app/api/weather?address=";
       }
       const response = await fetch(
@@ -32,6 +33,7 @@ function Weather() {
       } else {
         setErrorMsg("Invailid Location Specified");
         console.log(process.env.NODE_ENV);
+        console.log(apiUrl);
       }
     } catch (error) {
       alert(error);
