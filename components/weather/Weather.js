@@ -19,13 +19,15 @@ function Weather() {
       if (environment === "development") {
         apiUrl = "http://localhost:3000/api/weather?address=" + cityName;
       } else if (environment === "production") {
-        console.log("in the loop");
         apiUrl =
           "https://simpleweather-one.vercel.app/api/weather?address=" +
           cityName;
       }
       const response = await fetch(apiUrl);
+      console.log(response);
       const data = await response.json();
+      console.log(data);
+      console.log(data.response.error);
       if (data && !data.response.error) {
         setErrorMsg("");
         setWeatherLocationData(data.response);
