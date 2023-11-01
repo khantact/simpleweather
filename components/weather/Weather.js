@@ -6,6 +6,7 @@ function Weather() {
   const [weatherLocationData, setWeatherLocationData] = useState(null);
   const [cityName, setCityName] = useState("");
   const [iconPath, setIconPath] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
 
   async function fetchData(cityName) {
     try {
@@ -13,12 +14,15 @@ function Weather() {
         "http://localhost:3000/api/weather?address=" + cityName // using query parameters to get city name
       );
       const data = await response.json();
-      if (data) {
+      if (data && !data.response.error) {
+        setErrorMsg("");
         setWeatherLocationData(data.response);
         fetchIcon(data.response.current.condition.code);
+      } else {
+        setErrorMsg("Invailid Location Specified");
       }
     } catch (error) {
-      // alert(error);
+      alert(error);
     }
   }
 
@@ -28,7 +32,6 @@ function Weather() {
       if (item.code === searchCode) {
         // dont need /public/... since our public folder is in our root
         let path = "/weatherIcons/day/" + item.icon + ".png";
-        console.log("icon", item.icon);
         setIconPath(path);
         return path;
       }
@@ -63,11 +66,22 @@ function Weather() {
             Search
           </button>
         </form>
+        <div className="pt-3">
+          <h2
+            className={
+              errorMsg
+                ? "bg-red-300 rounded-md p-2 shadow-md flex justify-center"
+                : "hidden"
+            }
+          >
+            {errorMsg ? errorMsg : ""}
+          </h2>
+        </div>
         <div className="grid place-items-center pt-4">
           {/* TODO: make the text fade in instead of blinking into existence  */}
           <Image
             src={iconPath ? iconPath : ""}
-            alt="weather"
+            alt="weatherIcon"
             className="flex justify-center"
             width={86}
             height={86}

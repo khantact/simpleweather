@@ -9,7 +9,11 @@ export async function GET(req) {
   } else {
     apiURL = `http://api.weatherapi.com/v1/current.json?key=${process.env.WEATHER_KEY}&q=13346&aqi=no`;
   }
-  const query = await fetch(apiURL);
-  const response = await query.json();
-  return NextResponse.json({ response });
+  try {
+    const query = await fetch(apiURL);
+    const response = await query.json();
+    return NextResponse.json({ response });
+  } catch (e) {
+    console.log(e);
+  }
 }
