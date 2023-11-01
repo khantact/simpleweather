@@ -31,6 +31,7 @@ function Weather() {
         fetchIcon(data.response.current.condition.code);
       } else {
         setErrorMsg("Invailid Location Specified");
+        console.log(process.env.NODE_ENV);
       }
     } catch (error) {
       alert(error);
