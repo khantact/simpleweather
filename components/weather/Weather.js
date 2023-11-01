@@ -24,18 +24,13 @@ function Weather() {
           cityName;
       }
       const response = await fetch(apiUrl);
-      console.log(response);
       const data = await response.json();
-      console.log(data);
-      console.log(data.response.error);
       if (data && !data.response.error) {
         setErrorMsg("");
         setWeatherLocationData(data.response);
         fetchIcon(data.response.current.condition.code);
       } else {
         setErrorMsg("Invailid Location Specified");
-        console.log(process.env.NODE_ENV);
-        console.log(apiUrl);
       }
     } catch (error) {
       alert(error);
